@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/myserver/handlers"
+	"github.com/aamirlatif1/shop/handlers"
 )
 
 func main() {
