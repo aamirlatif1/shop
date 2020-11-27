@@ -9,21 +9,32 @@ import (
 	"time"
 
 	"github.com/aamirlatif1/shop/handlers"
+	"github.com/gorilla/mux"
 )
 
 func main() {
 	l := log.New(os.Stdout, "rgs ", log.LstdFlags)
 
-	sm := http.NewServeMux()
+	r := mux.NewRouter()
 
-	sm.Handle("/", handlers.NewHello(l))
-	sm.Handle("/items", handlers.NewItem(l))
+	it := handlers.NewItem(l)
 
-	http.ListenAndServe(":8080", sm)
+	getRouter := r.Methods(http.MethodGet).Subrouter()
+	getRouter.HandleFunc("/items", it.GetItems)
+
+	postRouter := r.Methods(http.MethodPost).Subrouter()
+	postRouter.HandleFunc("/items", it.AddItem)
+	postRouter.Use(it.MiddlewareValidateItem)
+
+	putRouter := r.Methods(http.MethodPut).Subrouter()
+	putRouter.HandleFunc("/items/{id:[0-9]+}", it.UpdateItem)
+	putRouter.Use(it.MiddlewareValidateItem)
+
+	http.ListenAndServe(":8080", r)
 
 	s := &http.Server{
 		Addr:         ":8080",
-		Handler:      sm,
+		Handler:      r,
 		IdleTimeout:  120 * time.Second,
 		ReadTimeout:  2 * time.Second,
 		WriteTimeout: 2 * time.Second,

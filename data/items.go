@@ -3,15 +3,35 @@ package data
 import (
 	"encoding/json"
 	"io"
+	"regexp"
 	"time"
+
+	"github.com/go-playground/validator"
 )
 
 type Item struct {
 	ID          int     `json:"id"`
-	Name        string  `json:"name"`
+	Name        string  `json:"name" validate:"required"`
 	Description string  `json:"description"`
-	Price       float32 `json:"price"`
+	Price       float32 `json:"price" validate:"gt=0"`
+	SKU         string  `json:"sku" validate:"required,sku"`
 	CreatedOn   string  `json:"-"`
+}
+
+func (i *Item) Validate() error {
+	validate := validator.New()
+	validate.RegisterValidation("sku", validateSKU)
+	return validate.Struct(i)
+}
+
+func validateSKU(fl validator.FieldLevel) bool {
+	re := regexp.MustCompile(`[a-z]+-[a-z]+-[a-z]+`)
+	matches := re.FindAllString(fl.Field().String(), -1)
+
+	if len(matches) != 1 {
+		return false
+	}
+	return true
 }
 
 func GetItems() Items {
@@ -46,6 +66,7 @@ var itemList = []*Item{
 		Name:        "Chair",
 		Description: "Arm Chair",
 		Price:       5000.00,
+		SKU:         "abc-def-ghi",
 		CreatedOn:   time.Now().UTC().String(),
 	},
 	&Item{
@@ -53,6 +74,7 @@ var itemList = []*Item{
 		Name:        "Bed",
 		Description: "Simple Bed",
 		Price:       15000.00,
+		SKU:         "agg-bdd-ddd",
 		CreatedOn:   time.Now().UTC().String(),
 	},
 }
