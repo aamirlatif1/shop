@@ -1,3 +1,17 @@
+// Package handlers Items API
+//
+//Documentation: for Item API
+//
+// Schemas: http
+// BasePath: /items
+// Version: 1.0.0
+//
+// Consumes:
+//	-application/json
+//
+// Produces:
+//	-application/json
+//swagger:meta
 package handlers
 
 import (
@@ -20,6 +34,8 @@ func NewItem(l *log.Logger) *Items {
 	return &Items{l}
 }
 
+//swagger:route GET /items items listItems
+//Returns a list of items
 func (i *Items) GetItems(rw http.ResponseWriter, r *http.Request) {
 	itemList := data.GetItems()
 	err := itemList.ToJson(rw)

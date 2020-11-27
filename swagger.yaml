@@ -1,0 +1,20 @@
+basePath: /items
+consumes:
+- application/json
+info:
+  description: |-
+    Documentation: for Item API
+
+    Schemas: http
+  title: Items API
+  version: 1.0.0
+paths:
+  /items:
+    get:
+      description: Returns a list of items
+      operationId: listItems
+      tags:
+      - items
+produces:
+- application/json
+swagger: "2.0"

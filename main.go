@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/aamirlatif1/shop/handlers"
+	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/mux"
 )
 
@@ -29,6 +30,11 @@ func main() {
 	putRouter := r.Methods(http.MethodPut).Subrouter()
 	putRouter.HandleFunc("/items/{id:[0-9]+}", it.UpdateItem)
 	putRouter.Use(it.MiddlewareValidateItem)
+
+	ops := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
+	sh := middleware.Redoc(ops, nil)
+	getRouter.Handle("/docs", sh)
+	getRouter.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 
 	http.ListenAndServe(":8080", r)
 
