@@ -13,12 +13,11 @@ import (
 
 func main() {
 	l := log.New(os.Stdout, "rgs ", log.LstdFlags)
-	hh := handlers.NewHello(l)
-	ih := handlers.NewItem(l)
+
 	sm := http.NewServeMux()
 
-	sm.Handle("/", hh)
-	sm.Handle("/items", ih)
+	sm.Handle("/", handlers.NewHello(l))
+	sm.Handle("/items", handlers.NewItem(l))
 
 	http.ListenAndServe(":8080", sm)
 

@@ -18,7 +18,22 @@ func GetItems() Items {
 	return itemList
 }
 
+func AddItem(i *Item) {
+	i.ID = getNextId()
+	itemList = append(itemList, i)
+}
+
+func getNextId() int {
+	li := itemList[len(itemList)-1]
+	return li.ID + 1
+}
+
 type Items []*Item
+
+func (i *Item) FromJson(r io.Reader) error {
+	e := json.NewDecoder(r)
+	return e.Decode(i)
+}
 
 func (i *Items) ToJson(w io.Writer) error {
 	e := json.NewEncoder(w)
